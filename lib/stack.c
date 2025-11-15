@@ -35,6 +35,17 @@ uint8_t llic_stack_pop(llic_stack_t *stack, uint16_t *out) {
   return 1;
 }
 
+uint8_t llic_stack_swap(llic_stack_t *stack) {
+  if (stack->index < 2)
+    return 0;
+
+  const uint16_t temporary = stack->data[stack->index - 1];
+  stack->data[stack->index - 1] = stack->data[stack->index - 2];
+  stack->data[stack->index - 2] = temporary;
+
+  return 1;
+}
+
 void llic_stack_free(llic_stack_t *stack) {
   free(stack->data);
   free(stack);

@@ -9,6 +9,9 @@ typedef enum {
   COMMAND_NOP = 0,
   COMMAND_PUSH,
   COMMAND_POP,
+  COMMAND_SWAP,
+  COMMAND_SET_REGISTER,
+  COMMAND_GET_REGISTER,
 } llic_command_id_t;
 
 typedef struct {

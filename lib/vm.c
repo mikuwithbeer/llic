@@ -100,6 +100,13 @@ void llic_vm_execute(llic_vm_t *vm) {
 
     break;
   }
+  case COMMAND_SWAP: {
+    if (!llic_stack_swap(vm->stack)) {
+      vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
+    }
+
+    break;
+  }
   }
 }
 
