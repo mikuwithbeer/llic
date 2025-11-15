@@ -81,6 +81,7 @@ void llic_vm_execute(llic_vm_t *vm) {
   }
   case COMMAND_PUSH: {
     const uint16_t value = (command.args[0] << 8) | (command.args[1] << 0);
+
     if (!llic_stack_push(vm->stack, value)) {
       vm->error = llic_error_new(ERROR_STACK_OVERFLOW);
     }
@@ -90,6 +91,7 @@ void llic_vm_execute(llic_vm_t *vm) {
   case COMMAND_POP: {
     uint16_t value;
     const llic_register_id_t rid = (llic_register_id_t)command.args[0];
+
     if (!llic_stack_pop(vm->stack, &value)) {
       vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
       return;
@@ -105,6 +107,27 @@ void llic_vm_execute(llic_vm_t *vm) {
       vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
     }
 
+    break;
+  }
+  case COMMAND_SET_REGISTER: {
+    const llic_register_id_t rid = (llic_register_id_t)command.args[0];
+    const uint16_t value = (command.args[1] << 8) | (command.args[2] << 0);
+
+    if (!llic_register_set(&vm->registers, rid, value))
+      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+
+    break;
+  }
+  case COMMAND_GET_REGISTER: {
+    uint16_t value;
+    const llic_register_id_t rid = (llic_register_id_t)command.args[0];
+
+    if (!llic_register_get(vm->registers, rid, &value)) {
+      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+      return;
+    }
+
+    llic_stack_push(vm->stack, value);
     break;
   }
   }
