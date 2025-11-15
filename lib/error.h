@@ -3,7 +3,13 @@
 
 #include <string.h>
 
-typedef enum { ERROR_NONE = 0, ERROR_UNKNOWN_COMMAND } llic_error_id_t;
+typedef enum {
+  ERROR_NONE = 0,
+  ERROR_UNKNOWN_COMMAND,
+  ERROR_STACK_OVERFLOW,
+  ERROR_STACK_UNDERFLOW,
+  ERROR_UNKNOWN_REGISTER
+} llic_error_id_t;
 
 typedef struct {
   llic_error_id_t id;

@@ -8,7 +8,16 @@ llic_error_t llic_error_new(const llic_error_id_t id) {
   case ERROR_NONE:
     break;
   case ERROR_UNKNOWN_COMMAND:
-    strcpy(error.message, "Unknown VM command");
+    strcpy(error.message, "unknown command");
+    break;
+  case ERROR_STACK_OVERFLOW:
+    strcpy(error.message, "stack overflow");
+    break;
+  case ERROR_STACK_UNDERFLOW:
+    strcpy(error.message, "stack underflow");
+    break;
+  case ERROR_UNKNOWN_REGISTER:
+    strcpy(error.message, "unknown register");
     break;
   }
 

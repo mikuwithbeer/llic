@@ -27,4 +27,7 @@ llic_register_t llic_register_default(void);
 uint8_t llic_register_get(llic_register_t registers, llic_register_id_t id,
                           uint16_t *out);
 
+uint8_t llic_register_set(llic_register_t *registers, llic_register_id_t id,
+                          uint16_t value);
+
 #endif // LLIC_REGISTER_H

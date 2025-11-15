@@ -25,14 +25,13 @@ llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
   return vm;
 }
 
-uint8_t llic_vm_run(llic_vm_t *vm) {
+uint8_t llic_vm_loop(llic_vm_t *vm) {
   uint8_t argi = 0, argc = 0;
   llic_bytecode_append(vm->bytecode, COMMAND_NOP); // bug
 
   while (vm->cursor < vm->bytecode->length) {
     if (vm->state == STATE_EXECUTE) {
-      // todo
-
+      llic_vm_execute(vm);
       vm->state = STATE_IDLE;
     } else if (vm->error.id != ERROR_NONE) {
       return 0;
@@ -48,7 +47,7 @@ uint8_t llic_vm_run(llic_vm_t *vm) {
         argi = 0, argc = llic_command_to_argc(cid);
         if (argc == 0) {
           vm->state = STATE_EXECUTE;
-        } else if (argc == 69) {
+        } else if (argc == UNREACHABLE_ARGC) {
           vm->error = llic_error_new(ERROR_UNKNOWN_COMMAND);
         } else {
           vm->state = STATE_COLLECT;
@@ -72,6 +71,36 @@ uint8_t llic_vm_run(llic_vm_t *vm) {
   }
 
   return 1;
+}
+
+void llic_vm_execute(llic_vm_t *vm) {
+  llic_command_t command = vm->command;
+  switch (command.id) {
+  case COMMAND_NOP: {
+    break;
+  }
+  case COMMAND_PUSH: {
+    const uint16_t value = (command.args[0] << 8) | (command.args[1] << 0);
+    if (!llic_stack_push(vm->stack, value)) {
+      vm->error = llic_error_new(ERROR_STACK_OVERFLOW);
+    }
+
+    break;
+  }
+  case COMMAND_POP: {
+    uint16_t value;
+    const llic_register_id_t rid = (llic_register_id_t)command.args[0];
+    if (!llic_stack_pop(vm->stack, &value)) {
+      vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
+      return;
+    }
+
+    if (!llic_register_set(&vm->registers, rid, value))
+      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+
+    break;
+  }
+  }
 }
 
 void llic_vm_free(llic_vm_t *vm) {

@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+#define UNREACHABLE_ARGC 69
+
 typedef enum {
   COMMAND_NOP = 0,
   COMMAND_PUSH,

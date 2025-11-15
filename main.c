@@ -6,20 +6,22 @@
 int main(void) {
   llic_bytecode_t *bytecode = llic_bytecode_new(32);
 
-  llic_bytecode_append(bytecode, 92);
-  llic_bytecode_append(bytecode, 3);
-  llic_bytecode_append(bytecode, 10);
-  llic_bytecode_append(bytecode, COMMAND_NOP);
-  llic_bytecode_append(bytecode, 31);
-  llic_bytecode_append(bytecode, 69);
+  llic_bytecode_append(bytecode, COMMAND_PUSH);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 99);
+  llic_bytecode_append(bytecode, COMMAND_POP);
+  llic_bytecode_append(bytecode, 0);
 
   llic_vm_t *vm = llic_vm_new(bytecode, llic_config_default());
-  uint8_t res = llic_vm_run(vm);
+  uint8_t res = llic_vm_loop(vm);
 
   if (res == 0) {
-    printf("Error: %s\n", vm->error.message);
+    printf("vm error: %s\n", vm->error.message);
     return 1;
   }
+
+  printf("%d %d %d %d %d %d\n", vm->registers.a, vm->registers.b,
+         vm->registers.c, vm->registers.d, vm->registers.e, vm->registers.f);
 
   return 0;
 }
