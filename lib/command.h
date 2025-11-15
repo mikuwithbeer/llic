@@ -3,7 +3,11 @@
 
 #include <stdlib.h>
 
-typedef enum { COMMAND_NOP } llic_command_id_t;
+typedef enum {
+  COMMAND_NOP = 0,
+  COMMAND_PUSH,
+  COMMAND_POP,
+} llic_command_id_t;
 
 typedef struct {
   llic_command_id_t id;

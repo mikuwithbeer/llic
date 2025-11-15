@@ -4,9 +4,14 @@
 #include "bytecode.h"
 #include "command.h"
 #include "config.h"
+#include "error.h"
 #include "stack.h"
 
-typedef enum { STATE_IDLE, STATE_COLLECTING, STATE_RUNNING } llic_vm_state_t;
+typedef enum {
+  STATE_IDLE = 0,
+  STATE_COLLECT,
+  STATE_EXECUTE
+} llic_vm_state_t;
 
 typedef struct {
   size_t cursor;
@@ -15,6 +20,7 @@ typedef struct {
   llic_bytecode_t *bytecode;
   llic_command_t command;
   llic_config_t config;
+  llic_error_t error;
   llic_stack_t *stack;
 } llic_vm_t;
 

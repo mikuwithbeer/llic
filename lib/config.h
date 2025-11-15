@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 typedef enum {
-  PERM_NONE,
+  PERM_NONE = 0,
   PERM_MOUSE = 1,
   PERM_KEYBOARD = 2,
   PERM_SCREEN = 4,

@@ -16,4 +16,6 @@ add_executable(llic main.c
         lib/register.h
         lib/command.c
         lib/command.h
+        lib/error.c
+        lib/error.h
 )

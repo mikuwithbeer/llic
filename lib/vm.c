@@ -1,7 +1,5 @@
 #include "vm.h"
 
-#include <stdio.h>
-
 llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
   if (bytecode == NULL)
     return NULL;
@@ -16,6 +14,7 @@ llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
   vm->bytecode = bytecode;
   vm->command = (llic_command_t){0};
   vm->config = config;
+  vm->error = (llic_error_t){0};
 
   vm->stack = llic_stack_new(config.stack_capacity);
   if (vm->stack == NULL) {
@@ -31,12 +30,12 @@ uint8_t llic_vm_run(llic_vm_t *vm) {
   llic_bytecode_append(vm->bytecode, COMMAND_NOP); // bug
 
   while (vm->cursor < vm->bytecode->length) {
-    if (vm->state == STATE_RUNNING) {
-      printf("cmd %d\n", vm->command.id);
-      printf("args %d %d %d %d\n", vm->command.args[0], vm->command.args[1],
-             vm->command.args[2], vm->command.args[3]);
+    if (vm->state == STATE_EXECUTE) {
+      // todo
 
       vm->state = STATE_IDLE;
+    } else if (vm->error.id != ERROR_NONE) {
+      return 0;
     } else {
       uint8_t byte;
       llic_bytecode_get(vm->bytecode, vm->cursor++, &byte);
@@ -48,22 +47,26 @@ uint8_t llic_vm_run(llic_vm_t *vm) {
 
         argi = 0, argc = llic_command_to_argc(cid);
         if (argc == 0) {
-          vm->state = STATE_RUNNING;
+          vm->state = STATE_EXECUTE;
+        } else if (argc == 69) {
+          vm->error = llic_error_new(ERROR_UNKNOWN_COMMAND);
         } else {
-          vm->state = STATE_COLLECTING;
+          vm->state = STATE_COLLECT;
         }
 
         break;
       }
 
-      case STATE_COLLECTING: {
+      case STATE_COLLECT: {
         vm->command.args[argi++] = byte;
         if (argi == argc) {
-          vm->state = STATE_RUNNING;
+          vm->state = STATE_EXECUTE;
         }
 
         break;
       }
+      default:
+        break;
       }
     }
   }
