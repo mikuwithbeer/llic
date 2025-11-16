@@ -15,7 +15,9 @@ uint8_t llic_stack_push(llic_stack_t *stack, uint16_t value);
 
 uint8_t llic_stack_pop(llic_stack_t *stack, uint16_t *out);
 
-uint8_t llic_stack_swap(llic_stack_t *stack);
+uint8_t llic_stack_swap(const llic_stack_t *stack);
+
+uint8_t llic_stack_reverse(llic_stack_t *stack);
 
 void llic_stack_free(llic_stack_t *stack);
 

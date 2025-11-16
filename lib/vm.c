@@ -1,5 +1,55 @@
 #include "vm.h"
 
+static uint8_t vm_stack_push(llic_vm_t *vm, const uint16_t value) {
+  if (!llic_stack_push(vm->stack, value)) {
+    vm->error = llic_error_new(ERROR_STACK_OVERFLOW);
+    return 0;
+  }
+
+  return 1;
+}
+
+static uint8_t vm_stack_pop(llic_vm_t *vm, uint16_t *value) {
+  if (!llic_stack_pop(vm->stack, value)) {
+    vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
+    return 0;
+  }
+
+  return 1;
+}
+
+static uint8_t vm_get_register(llic_vm_t *vm, const llic_register_id_t rid,
+                               uint16_t *value) {
+  if (!llic_register_get(vm->registers, rid, value)) {
+    vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    return 0;
+  }
+
+  return 1;
+}
+
+static uint8_t vm_set_register(llic_vm_t *vm, const llic_register_id_t rid,
+                               const uint16_t value) {
+  if (!llic_register_set(&vm->registers, rid, value)) {
+    vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    return 0;
+  }
+
+  return 1;
+}
+
+static uint8_t vm_get_two_register(llic_vm_t *vm, const llic_register_id_t rid1,
+                                   const llic_register_id_t rid2,
+                                   uint16_t *value1, uint16_t *value2) {
+  if (!llic_register_get(vm->registers, rid1, value1) ||
+      !llic_register_get(vm->registers, rid2, value2)) {
+    vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    return 0;
+  }
+
+  return 1;
+}
+
 llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
   if (bytecode == NULL)
     return NULL;
@@ -82,196 +132,188 @@ void llic_vm_execute(llic_vm_t *vm) {
     return;
   }
 
+  uint16_t value, value2;
+  llic_register_id_t rid, rid2;
+
   switch (cmd.id) {
   case COMMAND_NOP: {
     break;
   }
   case COMMAND_JUMP_BACK: {
-    uint16_t value;
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-
-    if (!llic_register_get(vm->registers, rid, &value)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    rid = (llic_register_id_t)cmd.args[0];
+    if (!vm_get_register(vm, rid, &value))
       return;
-    }
 
     vm->cursor -= value + 1;
     break;
   }
   case COMMAND_JUMP_FORWARD: {
-    uint16_t value;
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-
-    if (!llic_register_get(vm->registers, rid, &value)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    rid = (llic_register_id_t)cmd.args[0];
+    if (!vm_get_register(vm, rid, &value))
       return;
-    }
 
     vm->cursor += value - 1;
     break;
   }
-  case COMMAND_PUSH: {
-    const uint16_t value = (cmd.args[0] << 8) | (cmd.args[1] << 0);
-
-    if (!llic_stack_push(vm->stack, value))
-      vm->error = llic_error_new(ERROR_STACK_OVERFLOW);
-
+  case COMMAND_PUSH_STACK: {
+    value = (cmd.args[0] << 8) | (cmd.args[1] << 0);
+    vm_stack_push(vm, value);
     break;
   }
-  case COMMAND_POP: {
-    uint16_t value;
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-
-    if (!llic_stack_pop(vm->stack, &value)) {
-      vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
+  case COMMAND_POP_STACK: {
+    rid = (llic_register_id_t)cmd.args[0];
+    if (!vm_stack_pop(vm, &value))
       return;
-    }
 
-    if (!llic_register_set(&vm->registers, rid, value))
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    vm_set_register(vm, rid, value);
+    break;
+  }
+  case COMMAND_SWAP_STACK: {
+    if (!llic_stack_swap(vm->stack))
+      vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
 
     break;
   }
-  case COMMAND_SWAP: {
-    if (!llic_stack_swap(vm->stack)) {
+  case COMMAND_REVERSE_STACK: {
+    if (!llic_stack_reverse(vm->stack))
       vm->error = llic_error_new(ERROR_STACK_UNDERFLOW);
-    }
 
     break;
   }
   case COMMAND_SET_REGISTER: {
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-    const uint16_t value = (cmd.args[1] << 8) | (cmd.args[2] << 0);
+    rid = (llic_register_id_t)cmd.args[0];
+    value = (cmd.args[1] << 8) | (cmd.args[2] << 0);
 
-    if (!llic_register_set(&vm->registers, rid, value))
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
-
+    vm_set_register(vm, rid, value);
     break;
   }
   case COMMAND_GET_REGISTER: {
-    uint16_t value;
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-
-    if (!llic_register_get(vm->registers, rid, &value)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    rid = (llic_register_id_t)cmd.args[0];
+    if (!vm_get_register(vm, rid, &value))
       return;
-    }
 
-    if (!llic_stack_push(vm->stack, value))
-      vm->error = llic_error_new(ERROR_STACK_OVERFLOW);
-
+    vm_stack_push(vm, value);
     break;
   }
   case COMMAND_COPY_REGISTER: {
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-    const llic_register_id_t rid2 = (llic_register_id_t)cmd.args[1];
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
 
-    uint16_t value;
-    if (!llic_register_get(vm->registers, rid, &value)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    if (!vm_get_register(vm, rid2, &value))
       return;
-    }
 
-    if (!llic_register_set(&vm->registers, rid2, value))
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
-
+    vm_set_register(vm, rid, value);
     break;
   }
   case COMMAND_ADD_REGISTER: {
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-    const llic_register_id_t rid2 = (llic_register_id_t)cmd.args[1];
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
 
-    uint16_t value, value2;
-    if (!llic_register_get(vm->registers, rid, &value) ||
-        !llic_register_get(vm->registers, rid2, &value2)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
       return;
-    }
 
-    llic_register_set(&vm->registers, rid, value + value2);
+    vm_set_register(vm, rid, value + value2);
     break;
   }
   case COMMAND_SUB_REGISTER: {
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-    const llic_register_id_t rid2 = (llic_register_id_t)cmd.args[1];
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
 
-    uint16_t value, value2;
-    if (!llic_register_get(vm->registers, rid, &value) ||
-        !llic_register_get(vm->registers, rid2, &value2)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
       return;
-    }
 
-    llic_register_set(&vm->registers, rid, value - value2);
+    vm_set_register(vm, rid, value - value2);
     break;
   }
   case COMMAND_MUL_REGISTER: {
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-    const llic_register_id_t rid2 = (llic_register_id_t)cmd.args[1];
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
 
-    uint16_t value, value2;
-    if (!llic_register_get(vm->registers, rid, &value) ||
-        !llic_register_get(vm->registers, rid2, &value2)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
       return;
-    }
 
-    llic_register_set(&vm->registers, rid, value * value2);
+    vm_set_register(vm, rid, value * value2);
     break;
   }
   case COMMAND_DIV_REGISTER: {
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-    const llic_register_id_t rid2 = (llic_register_id_t)cmd.args[1];
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
 
-    uint16_t value, value2;
-    if (!llic_register_get(vm->registers, rid, &value) ||
-        !llic_register_get(vm->registers, rid2, &value2)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
       return;
-    }
 
     if (value2 == 0) {
       vm->error = llic_error_new(ERROR_DIVIDE_BY_ZERO);
       return;
     }
 
-    llic_register_set(&vm->registers, rid, value / value2);
+    vm_set_register(vm, rid, value / value2);
     break;
   }
   case COMMAND_MOD_REGISTER: {
-    const llic_register_id_t rid = (llic_register_id_t)cmd.args[0];
-    const llic_register_id_t rid2 = (llic_register_id_t)cmd.args[1];
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
 
-    uint16_t value, value2;
-    if (!llic_register_get(vm->registers, rid, &value) ||
-        !llic_register_get(vm->registers, rid2, &value2)) {
-      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
       return;
-    }
 
     if (value2 == 0) {
       vm->error = llic_error_new(ERROR_DIVIDE_BY_ZERO);
       return;
     }
 
-    llic_register_set(&vm->registers, rid, value % value2);
+    vm_set_register(vm, rid, value % value2);
+    break;
+  }
+  case COMMAND_BIGGER_REGISTER: {
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
+
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
+      return;
+
+    vm_stack_push(vm, value > value2);
+    break;
+  }
+  case COMMAND_SMALLER_REGISTER: {
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
+
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
+      return;
+
+    vm_stack_push(vm, value < value2);
+    break;
+  }
+  case COMMAND_EQUAL_REGISTER: {
+    rid = (llic_register_id_t)cmd.args[0];
+    rid2 = (llic_register_id_t)cmd.args[1];
+
+    if (!vm_get_two_register(vm, rid, rid2, &value, &value2))
+      return;
+
+    vm_stack_push(vm, value == value2);
     break;
   }
   case COMMAND_GET_MOUSE_POSITION: {
     uint16_t mouse_x, mouse_y;
+    rid = REG_A, rid2 = REG_B;
+
     if (!llic_input_get_mouse_position(&mouse_x, &mouse_y)) {
       vm->error = llic_error_new(ERROR_MACOS_API);
       return;
     }
 
-    llic_register_set(&vm->registers, REG_A, mouse_x);
-    llic_register_set(&vm->registers, REG_B, mouse_y);
+    vm_set_register(vm, rid, mouse_x);
+    vm_set_register(vm, rid2, mouse_y);
     break;
   }
   case COMMAND_SET_MOUSE_POSITION: {
     uint16_t mouse_x, mouse_y;
-    llic_register_get(vm->registers, REG_A, &mouse_x);
-    llic_register_get(vm->registers, REG_B, &mouse_y);
+    rid = REG_A, rid2 = REG_B;
+
+    if (!vm_get_two_register(vm, rid, rid2, &mouse_x, &mouse_y))
+      return;
 
     llic_input_set_mouse_position(mouse_x, mouse_y);
     break;

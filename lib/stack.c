@@ -35,7 +35,7 @@ uint8_t llic_stack_pop(llic_stack_t *stack, uint16_t *out) {
   return 1;
 }
 
-uint8_t llic_stack_swap(llic_stack_t *stack) {
+uint8_t llic_stack_swap(const llic_stack_t *stack) {
   if (stack->index < 2)
     return 0;
 
@@ -44,6 +44,15 @@ uint8_t llic_stack_swap(llic_stack_t *stack) {
   stack->data[stack->index - 2] = temporary;
 
   return 1;
+}
+
+uint8_t llic_stack_reverse(llic_stack_t *stack) {
+  uint16_t value;
+  if (!llic_stack_pop(stack, &value))
+    return 0;
+
+  value = !value;
+  return llic_stack_push(stack, value);
 }
 
 void llic_stack_free(llic_stack_t *stack) {
