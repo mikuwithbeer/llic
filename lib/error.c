@@ -19,6 +19,12 @@ llic_error_t llic_error_new(const llic_error_id_t id) {
   case ERROR_UNKNOWN_REGISTER:
     strcpy(error.message, "unknown register");
     break;
+  case ERROR_PERMISSION_DENIED:
+    strcpy(error.message, "permission denied");
+    break;
+  case ERROR_MACOS_API:
+    strcpy(error.message, "macos api error");
+    break;
   }
 
   return error;

@@ -18,4 +18,8 @@ add_executable(llic main.c
         lib/command.h
         lib/error.c
         lib/error.h
+        lib/input.c
+        lib/input.h
 )
+
+target_link_libraries(llic "-framework ApplicationServices")

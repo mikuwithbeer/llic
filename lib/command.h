@@ -12,6 +12,8 @@ typedef enum {
   COMMAND_SWAP,
   COMMAND_SET_REGISTER,
   COMMAND_GET_REGISTER,
+  COMMAND_GET_MOUSE_POSITION,
+  COMMAND_SET_MOUSE_POSITION
 } llic_command_id_t;
 
 typedef struct {

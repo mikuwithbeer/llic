@@ -4,6 +4,8 @@ uint8_t llic_command_to_argc(const llic_command_id_t id) {
   switch (id) {
   case COMMAND_NOP:
   case COMMAND_SWAP:
+  case COMMAND_GET_MOUSE_POSITION:
+  case COMMAND_SET_MOUSE_POSITION:
     return 0;
   case COMMAND_POP:
   case COMMAND_GET_REGISTER:

@@ -1,5 +1,7 @@
 #include "vm.h"
 
+#include "input.h"
+
 llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
   if (bytecode == NULL)
     return NULL;
@@ -128,6 +130,37 @@ void llic_vm_execute(llic_vm_t *vm) {
     }
 
     llic_stack_push(vm->stack, value);
+    break;
+  }
+  case COMMAND_GET_MOUSE_POSITION: {
+    if (!llic_config_check(vm->config, PERM_MOUSE)) {
+      vm->error = llic_error_new(ERROR_PERMISSION_DENIED);
+      return;
+    }
+
+    uint16_t mouse_x, mouse_y;
+    if (!llic_input_get_mouse_position(&mouse_x, &mouse_y)) {
+      vm->error = llic_error_new(ERROR_MACOS_API);
+      return;
+    }
+
+    llic_register_set(&vm->registers, REG_A, mouse_x);
+    llic_register_set(&vm->registers, REG_B, mouse_y);
+
+    break;
+  }
+  case COMMAND_SET_MOUSE_POSITION: {
+    if (!llic_config_check(vm->config, PERM_MOUSE)) {
+      vm->error = llic_error_new(ERROR_PERMISSION_DENIED);
+      return;
+    }
+
+    uint16_t mouse_x, mouse_y;
+    llic_register_get(vm->registers, REG_A, &mouse_x);
+    llic_register_get(vm->registers, REG_B, &mouse_y);
+
+    llic_input_set_mouse_position(mouse_x, mouse_y);
+
     break;
   }
   }
