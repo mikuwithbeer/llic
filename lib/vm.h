@@ -5,6 +5,7 @@
 #include "command.h"
 #include "config.h"
 #include "error.h"
+#include "input.h"
 #include "register.h"
 #include "stack.h"
 

@@ -9,6 +9,8 @@ uint8_t llic_command_to_argc(const llic_command_id_t id) {
     return 0;
   case COMMAND_POP:
   case COMMAND_GET_REGISTER:
+  case COMMAND_JUMP_BACK:
+  case COMMAND_JUMP_FORWARD:
     return 1;
   case COMMAND_PUSH:
   case COMMAND_COPY_REGISTER:

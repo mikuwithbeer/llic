@@ -1,4 +1,3 @@
-#include "lib/config.h"
 #include "lib/vm.h"
 
 #include <stdio.h>
@@ -6,24 +5,41 @@
 int main(void) {
   llic_bytecode_t *bytecode = llic_bytecode_new(32);
 
-  llic_bytecode_append(bytecode, COMMAND_PUSH);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 99);
-  llic_bytecode_append(bytecode, COMMAND_PUSH);
-  llic_bytecode_append(bytecode, 10);
-  llic_bytecode_append(bytecode, 2);
-  llic_bytecode_append(bytecode, COMMAND_SWAP);
+
   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
   llic_bytecode_append(bytecode, 0);
   llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 40);
+  llic_bytecode_append(bytecode, 6);
+
+  llic_bytecode_append(bytecode, COMMAND_JUMP_FORWARD);
+  llic_bytecode_append(bytecode, 0);
+
+  llic_bytecode_append(bytecode, COMMAND_NOP);
   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 1);
   llic_bytecode_append(bytecode, 0);
   llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, COMMAND_DIV_REGISTER);
+  llic_bytecode_append(bytecode, 6);
+  llic_bytecode_append(bytecode, COMMAND_JUMP_BACK);
   llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 1);
+  /*
+    llic_bytecode_append(bytecode, COMMAND_PUSH);
+    llic_bytecode_append(bytecode, 0);
+    llic_bytecode_append(bytecode, 99);
+    llic_bytecode_append(bytecode, COMMAND_PUSH);
+    llic_bytecode_append(bytecode, 10);
+    llic_bytecode_append(bytecode, 2);
+    llic_bytecode_append(bytecode, COMMAND_SWAP);
+    llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+    llic_bytecode_append(bytecode, 0);
+    llic_bytecode_append(bytecode, 0);
+    llic_bytecode_append(bytecode, 40);
+    llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+    llic_bytecode_append(bytecode, 1);
+    llic_bytecode_append(bytecode, 0);
+    llic_bytecode_append(bytecode, 0);
+    llic_bytecode_append(bytecode, COMMAND_DIV_REGISTER);
+    llic_bytecode_append(bytecode, 0);
+    llic_bytecode_append(bytecode, 1);*/
   /*
   llic_bytecode_append(bytecode, COMMAND_SET_MOUSE_POSITION);
   llic_bytecode_append(bytecode, COMMAND_GET_MOUSE_POSITION);

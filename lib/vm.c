@@ -1,7 +1,5 @@
 #include "vm.h"
 
-#include "input.h"
-
 llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
   if (bytecode == NULL)
     return NULL;
@@ -79,6 +77,30 @@ void llic_vm_execute(llic_vm_t *vm) {
   llic_command_t command = vm->command;
   switch (command.id) {
   case COMMAND_NOP: {
+    break;
+  }
+  case COMMAND_JUMP_BACK: {
+    uint16_t value;
+    const llic_register_id_t rid = (llic_register_id_t)command.args[0];
+
+    if (!llic_register_get(vm->registers, rid, &value)) {
+      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+      return;
+    }
+
+    vm->cursor -= value + 1;
+    break;
+  }
+  case COMMAND_JUMP_FORWARD: {
+    uint16_t value;
+    const llic_register_id_t rid = (llic_register_id_t)command.args[0];
+
+    if (!llic_register_get(vm->registers, rid, &value)) {
+      vm->error = llic_error_new(ERROR_UNKNOWN_REGISTER);
+      return;
+    }
+
+    vm->cursor += value - 1;
     break;
   }
   case COMMAND_PUSH: {
