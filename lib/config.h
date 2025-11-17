@@ -9,7 +9,9 @@ typedef enum {
   PERM_MOUSE = 1,
   PERM_KEYBOARD = 2,
   PERM_SCREEN = 4,
-  PERM_ALL = PERM_MOUSE | PERM_KEYBOARD | PERM_SCREEN
+  PERM_OS = 8,
+  PERM_INPUT = PERM_MOUSE | PERM_KEYBOARD | PERM_SCREEN,
+  PERM_ALL = PERM_INPUT | PERM_OS
 } llic_permission_t;
 
 /// Holds the configuration settings for a VM instance.
