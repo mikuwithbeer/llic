@@ -145,7 +145,7 @@ void llic_vm_execute(llic_vm_t *vm) {
 
   // these variables can be shared since they are used in most of the opcodes
   uint16_t value, value2;
-  llic_register_id_t rid, rid2, rid3;
+  llic_register_id_t rid, rid2;
 
   switch (cmd.id) {
   case COMMAND_NOP: {
@@ -331,16 +331,25 @@ void llic_vm_execute(llic_vm_t *vm) {
     break;
   }
   case COMMAND_EXECUTE_MOUSE: {
-    uint16_t mouse_x, mouse_y, mei;
-    rid = REG_A, rid2 = REG_B, rid3 = REG_C;
+    uint16_t type;
+    rid = REG_A;
 
-    if (!vm_get_two_register(vm, rid, rid2, &mouse_x, &mouse_y))
+    if (!vm_get_register(vm, rid, &type))
       return;
 
-    if (!vm_get_register(vm, rid3, &mei))
+    if (!llic_input_apply_mouse_event(type))
+      vm->error = llic_error_new(ERROR_MACOS_API);
+
+    break;
+  }
+  case COMMAND_SCROLL_MOUSE: {
+    uint16_t type, power;
+    rid = REG_A, rid2 = REG_B;
+
+    if (!vm_get_two_register(vm, rid, rid2, &type, &power))
       return;
 
-    if (!llic_input_apply_mouse_event(mouse_x, mouse_y, mei))
+    if (!llic_input_scroll_mouse(power, type))
       vm->error = llic_error_new(ERROR_MACOS_API);
 
     break;

@@ -41,30 +41,43 @@ int main(void) {
     llic_bytecode_append(bytecode, 0);
     llic_bytecode_append(bytecode, 1);*/
 
-  llic_bytecode_append(bytecode, COMMAND_GET_MOUSE_POSITION);
+  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 1);
+  llic_bytecode_append(bytecode, 255);
 
   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 2);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 60);
+  llic_bytecode_append(bytecode, 1);
+  llic_bytecode_append(bytecode, 1);
+  llic_bytecode_append(bytecode, 255);
 
-  llic_bytecode_append(bytecode, COMMAND_ADD_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 2);
+  llic_bytecode_append(bytecode, COMMAND_SET_MOUSE_POSITION);
 
   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 2);
+  llic_bytecode_append(bytecode, 0);
   llic_bytecode_append(bytecode, 0);
   llic_bytecode_append(bytecode, 0);
 
   llic_bytecode_append(bytecode, COMMAND_EXECUTE_MOUSE);
 
   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 2);
+  llic_bytecode_append(bytecode, 0);
   llic_bytecode_append(bytecode, 0);
   llic_bytecode_append(bytecode, 1);
 
   llic_bytecode_append(bytecode, COMMAND_EXECUTE_MOUSE);
+
+  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 3);
+
+  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+  llic_bytecode_append(bytecode, 1);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 20);
+
+  llic_bytecode_append(bytecode, COMMAND_SCROLL_MOUSE);
 
   llic_config_t config = llic_config_default();
   config.permission = PERM_MOUSE;

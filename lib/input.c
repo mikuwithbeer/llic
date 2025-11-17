@@ -22,11 +22,10 @@ uint8_t llic_input_set_mouse_position(const uint16_t x, const uint16_t y) {
   return 1;
 }
 
-uint8_t llic_input_apply_mouse_event(const uint16_t x, const uint16_t y,
-                                     const llic_input_mouse_event_t mei) {
+uint8_t llic_input_apply_mouse_event(const llic_input_mouse_event_t type) {
   CGEventType event_type;
 
-  switch (mei) {
+  switch (type) {
   case MOUSE_LEFT_CLICK_DOWN:
     event_type = kCGEventLeftMouseDown;
     break;
@@ -43,8 +42,54 @@ uint8_t llic_input_apply_mouse_event(const uint16_t x, const uint16_t y,
     return 0;
   }
 
+  uint16_t x, y;
+  if (!llic_input_get_mouse_position(&x, &y))
+    return 0;
+
   const CGPoint point = CGPointMake(x, y);
   const CGEventRef event = CGEventCreateMouseEvent(NULL, event_type, point, 0);
+
+  CGEventPost(kCGHIDEventTap, event);
+  CFRelease(event);
+
+  return 1;
+}
+
+uint8_t llic_input_scroll_mouse(uint16_t power,
+                                llic_input_scroll_event_t type) {
+
+  int32_t delta_v, delta_h;
+
+  switch (type) {
+  case MOUSE_SCROLL_DOWN: {
+    delta_v = 0;
+    delta_h = -power;
+    break;
+  }
+  case MOUSE_SCROLL_UP: {
+    delta_v = 0;
+    delta_h = power;
+    break;
+  }
+  case MOUSE_SCROLL_LEFT: {
+    delta_v = -power;
+    delta_h = 0;
+    break;
+  }
+  case MOUSE_SCROLL_RIGHT: {
+    delta_v = power;
+    delta_h = 0;
+    break;
+  }
+  default:
+    return 1;
+  }
+
+  const CGEventRef event = CGEventCreateScrollWheelEvent(
+      NULL, kCGScrollEventUnitPixel, 2, delta_v, delta_h);
+
+  if (!event)
+    return 0;
 
   CGEventPost(kCGHIDEventTap, event);
   CFRelease(event);
