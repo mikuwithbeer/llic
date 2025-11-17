@@ -1,5 +1,10 @@
 #include "vm.h"
 
+/* ==========================================
+ * SOME INTERNAL FUNCTIONS TO AVOID REPEATING
+ * ==========================================
+ */
+
 static uint8_t vm_stack_push(llic_vm_t *vm, const uint16_t value) {
   if (!llic_stack_push(vm->stack, value)) {
     vm->error = llic_error_new(ERROR_STACK_OVERFLOW);
@@ -50,6 +55,11 @@ static uint8_t vm_get_two_register(llic_vm_t *vm, const llic_register_id_t rid1,
   return 1;
 }
 
+/* ==========================
+ * ACTUALLY EXPOSED FUNCTIONS
+ * ==========================
+ */
+
 llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
   if (bytecode == NULL)
     return NULL;
@@ -68,7 +78,7 @@ llic_vm_t *llic_vm_new(llic_bytecode_t *bytecode, const llic_config_t config) {
 
   vm->stack = llic_stack_new(config.stack_capacity);
   if (vm->stack == NULL) {
-    free(vm);
+    free(vm); // also free vm
     return NULL;
   }
 
@@ -84,6 +94,7 @@ uint8_t llic_vm_loop(llic_vm_t *vm) {
       llic_vm_execute(vm);
       vm->state = STATE_IDLE;
     } else if (vm->error.id != ERROR_NONE) {
+      // error is already stored inside vm
       return 0;
     } else {
       uint8_t byte;
@@ -132,6 +143,7 @@ void llic_vm_execute(llic_vm_t *vm) {
     return;
   }
 
+  // these variables can be shared since they are used in most of the opcodes
   uint16_t value, value2;
   llic_register_id_t rid, rid2;
 

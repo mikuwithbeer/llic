@@ -2,9 +2,8 @@
 
 uint8_t llic_input_get_mouse_position(uint16_t *x, uint16_t *y) {
   const CGEventRef event = CGEventCreate(NULL);
-  if (!event) {
+  if (!event)
     return 0;
-  }
 
   const CGPoint cursor = CGEventGetLocation(event);
   CFRelease(event);

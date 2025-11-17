@@ -8,7 +8,7 @@ llic_bytecode_t *llic_bytecode_new(const size_t capacity) {
 
     uint8_t *data = malloc(capacity);
     if (data == NULL) {
-      free(bytecode);
+      free(bytecode); // also free bytecode before failing
       return NULL;
     }
 
@@ -30,7 +30,7 @@ uint8_t llic_bytecode_get(const llic_bytecode_t *bytecode, const size_t index,
 
 uint8_t llic_bytecode_append(llic_bytecode_t *bytecode, const uint8_t value) {
   if (bytecode->length >= bytecode->capacity) {
-    bytecode->capacity *= 2;
+    bytecode->capacity *= 2; // i think its ok for now
 
     uint8_t *data = realloc(bytecode->data, bytecode->capacity);
     if (data == NULL)
@@ -45,11 +45,9 @@ uint8_t llic_bytecode_append(llic_bytecode_t *bytecode, const uint8_t value) {
 
 uint8_t llic_bytecode_load(llic_bytecode_t *bytecode, const uint8_t *data,
                            const size_t length) {
-  for (size_t index = 0; index <= length; index++) {
-    const uint8_t result = llic_bytecode_append(bytecode, data[index]);
-    if (result == 0)
+  for (size_t index = 0; index <= length; index++)
+    if (!llic_bytecode_append(bytecode, data[index]))
       return 0;
-  }
 
   return 1;
 }

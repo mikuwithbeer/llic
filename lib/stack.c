@@ -11,7 +11,7 @@ llic_stack_t *llic_stack_new(const size_t size) {
 
   uint16_t *data = malloc(sizeof(uint16_t) * size);
   if (data == NULL) {
-    free(stack);
+    free(stack); // also free stack if fails
     return NULL;
   }
 

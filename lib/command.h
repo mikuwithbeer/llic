@@ -3,8 +3,10 @@
 
 #include "config.h"
 
-#define UNREACHABLE_ARGC 69
+/// Sentinel value for commands that should be unreachable
+#define UNREACHABLE_ARGC 67
 
+/// Represents all possible command opcodes for the VM.
 typedef enum {
   // vm ops
   COMMAND_NOP = 0,
@@ -32,12 +34,29 @@ typedef enum {
   COMMAND_SET_MOUSE_POSITION
 } llic_command_id_t;
 
+/// Represents a single command with its ID and arguments.
 typedef struct {
   llic_command_id_t id;
+  /// A fixed-size array holding the arguments for this command.
   uint8_t args[4];
 } llic_command_t;
 
+/**
+ * @brief Gets the number of arguments required for a specific command ID.
+ *
+ * @param id The command ID to query.
+ *
+ * @return The number of arguments the command uses.
+ */
 uint8_t llic_command_to_argc(llic_command_id_t id);
+
+/**
+ * @brief Gets the permission level required to execute a command.
+ *
+ * @param id The command ID to check.
+ *
+ * @return The minimum permission requirement for the command.
+ */
 llic_permission_t llic_permission_from_command(llic_command_id_t id);
 
 #endif // LLIC_COMMAND_H
