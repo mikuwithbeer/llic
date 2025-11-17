@@ -32,6 +32,7 @@ typedef enum {
   // mouse ops
   COMMAND_GET_MOUSE_POSITION,
   COMMAND_SET_MOUSE_POSITION,
+  COMMAND_EXECUTE_MOUSE
 } llic_command_id_t;
 
 /// Represents a single command with its ID and arguments.

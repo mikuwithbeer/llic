@@ -7,6 +7,7 @@ uint8_t llic_command_to_argc(const llic_command_id_t id) {
   case COMMAND_REVERSE_STACK:
   case COMMAND_GET_MOUSE_POSITION:
   case COMMAND_SET_MOUSE_POSITION:
+  case COMMAND_EXECUTE_MOUSE:
     return 0;
   case COMMAND_POP_STACK:
   case COMMAND_GET_REGISTER:
@@ -35,6 +36,7 @@ llic_permission_t llic_permission_from_command(llic_command_id_t id) {
   switch (id) {
   case COMMAND_GET_MOUSE_POSITION:
   case COMMAND_SET_MOUSE_POSITION:
+  case COMMAND_EXECUTE_MOUSE:
     return PERM_MOUSE;
   default:
     return PERM_NONE;

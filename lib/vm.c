@@ -145,7 +145,7 @@ void llic_vm_execute(llic_vm_t *vm) {
 
   // these variables can be shared since they are used in most of the opcodes
   uint16_t value, value2;
-  llic_register_id_t rid, rid2;
+  llic_register_id_t rid, rid2, rid3;
 
   switch (cmd.id) {
   case COMMAND_NOP: {
@@ -328,6 +328,21 @@ void llic_vm_execute(llic_vm_t *vm) {
       return;
 
     llic_input_set_mouse_position(mouse_x, mouse_y);
+    break;
+  }
+  case COMMAND_EXECUTE_MOUSE: {
+    uint16_t mouse_x, mouse_y, mei;
+    rid = REG_A, rid2 = REG_B, rid3 = REG_C;
+
+    if (!vm_get_two_register(vm, rid, rid2, &mouse_x, &mouse_y))
+      return;
+
+    if (!vm_get_register(vm, rid3, &mei))
+      return;
+
+    if (!llic_input_apply_mouse_event(mouse_x, mouse_y, mei))
+      vm->error = llic_error_new(ERROR_MACOS_API);
+
     break;
   }
   }
