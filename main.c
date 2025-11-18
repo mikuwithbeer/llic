@@ -69,8 +69,15 @@ int main(void) {
 
   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
   llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 4);
+  llic_bytecode_append(bytecode, 255);
+
+  llic_bytecode_append(bytecode, COMMAND_SLEEP);
+
+  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
   llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 2);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 1);
 
   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
   llic_bytecode_append(bytecode, 1);
@@ -80,7 +87,7 @@ int main(void) {
   llic_bytecode_append(bytecode, COMMAND_SCROLL_MOUSE);
 
   llic_config_t config = llic_config_default();
-  config.permission = PERM_MOUSE;
+  config.permission = PERM_ALL;
 
   llic_vm_t *vm = llic_vm_new(bytecode, config);
   uint8_t res = llic_vm_loop(vm);

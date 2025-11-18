@@ -354,6 +354,16 @@ void llic_vm_execute(llic_vm_t *vm) {
 
     break;
   }
+  case COMMAND_SLEEP: {
+    uint16_t ms;
+    rid = REG_A;
+
+    if (!vm_get_register(vm, rid, &ms))
+      return;
+
+    usleep(ms * 1000);
+    break;
+  }
   }
 }
 
