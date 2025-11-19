@@ -86,6 +86,8 @@ int main(void) {
 
   llic_bytecode_append(bytecode, COMMAND_SCROLL_MOUSE);
 
+  llic_bytecode_append(bytecode, COMMAND_HALT);
+
   llic_config_t config = llic_config_default();
   config.permission = PERM_ALL;
 

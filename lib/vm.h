@@ -10,7 +10,12 @@
 #include "stack.h"
 
 /// Represents the current execution state of the VM.
-typedef enum { STATE_IDLE = 0, STATE_COLLECT, STATE_EXECUTE } llic_vm_state_t;
+typedef enum {
+  STATE_IDLE = 0,
+  STATE_COLLECT,
+  STATE_EXECUTE,
+  STATE_HALT
+} llic_vm_state_t;
 
 /// Represents the complete state of a VM.
 typedef struct {

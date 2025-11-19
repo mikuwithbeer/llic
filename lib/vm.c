@@ -92,7 +92,9 @@ uint8_t llic_vm_loop(llic_vm_t *vm) {
   while (vm->cursor < vm->bytecode->length) {
     if (vm->state == STATE_EXECUTE) {
       llic_vm_execute(vm);
-      vm->state = STATE_IDLE;
+
+      if (vm->state == STATE_EXECUTE)
+        vm->state = STATE_IDLE;
     } else if (vm->error.id != ERROR_NONE) {
       // error is already stored inside vm
       return 0;
@@ -116,7 +118,6 @@ uint8_t llic_vm_loop(llic_vm_t *vm) {
 
         break;
       }
-
       case STATE_COLLECT: {
         vm->command.args[argi++] = byte;
         if (argi == argc) {
@@ -124,6 +125,9 @@ uint8_t llic_vm_loop(llic_vm_t *vm) {
         }
 
         break;
+      }
+      case STATE_HALT: {
+        return 1;
       }
       default:
         break;
@@ -165,6 +169,10 @@ void llic_vm_execute(llic_vm_t *vm) {
       return;
 
     vm->cursor += value - 1;
+    break;
+  }
+  case COMMAND_HALT: {
+    vm->state = STATE_HALT;
     break;
   }
   case COMMAND_PUSH_STACK: {
