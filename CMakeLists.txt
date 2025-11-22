@@ -2,24 +2,24 @@ cmake_minimum_required(VERSION 4.0)
 project(llic C)
 
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(llic main.c
-        lib/bytecode.c
-        lib/bytecode.h
-        lib/vm.c
-        lib/vm.h
-        lib/config.c
-        lib/config.h
-        lib/stack.c
-        lib/stack.h
-        lib/register.c
-        lib/register.h
-        lib/command.c
-        lib/command.h
-        lib/error.c
-        lib/error.h
-        lib/input.c
-        lib/input.h
+add_executable(llic main.c)
+
+target_sources(llic PRIVATE
+        machine/bytecode.c machine/bytecode.h
+        machine/vm.c machine/vm.h
+        machine/config.c machine/config.h
+        machine/stack.c machine/stack.h
+        machine/register.c machine/register.h
+        machine/command.c machine/command.h
+        machine/error.c machine/error.h
+        machine/input.c machine/input.h
 )
 
-target_link_libraries(llic "-framework ApplicationServices")
+target_compile_options(llic PRIVATE -Wall -Wextra -Wpedantic)
+
+find_library(APP_SERVICES_LIB ApplicationServices REQUIRED)
+target_link_libraries(llic PRIVATE ${APP_SERVICES_LIB})
