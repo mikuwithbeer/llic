@@ -156,19 +156,29 @@ void llic_vm_execute(llic_vm_t *vm) {
     break;
   }
   case COMMAND_JUMP_BACK: {
-    rid = (llic_register_id_t)cmd.args[0];
-    if (!vm_get_register(vm, rid, &value))
+    if (!vm_stack_pop(vm, &value))
       return;
 
-    vm->cursor -= value + 1;
+    rid = REG_F;
+    if (!vm_get_register(vm, rid, &value2))
+      return;
+
+    if (value2 == 1)
+      vm->cursor -= value + 1;
+
     break;
   }
   case COMMAND_JUMP_FORWARD: {
-    rid = (llic_register_id_t)cmd.args[0];
-    if (!vm_get_register(vm, rid, &value))
+    if (!vm_stack_pop(vm, &value))
       return;
 
-    vm->cursor += value - 1;
+    rid = REG_F;
+    if (!vm_get_register(vm, rid, &value2))
+      return;
+
+    if (value2 == 1)
+      vm->cursor += value - 1;
+
     break;
   }
   case COMMAND_HALT: {

@@ -1,5 +1,7 @@
 #include "stack.h"
 
+#include <stdio.h>
+
 llic_stack_t *llic_stack_new(const size_t size) {
   llic_stack_t *stack = malloc(sizeof(llic_stack_t));
   if (stack == NULL) {

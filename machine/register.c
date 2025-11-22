@@ -46,10 +46,10 @@ uint8_t llic_register_set(llic_register_t *registers,
     registers->d = value;
     break;
   case REG_E:
-    registers->d = value;
+    registers->e = value;
     break;
   case REG_F:
-    registers->d = value;
+    registers->f = value;
     break;
   default:
     return 0;

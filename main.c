@@ -5,22 +5,30 @@
 int main(void) {
   llic_bytecode_t *bytecode = llic_bytecode_new(32);
 
-  /*
-    llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-    llic_bytecode_append(bytecode, 0);
-    llic_bytecode_append(bytecode, 0);
-    llic_bytecode_append(bytecode, 6);
+  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+  llic_bytecode_append(bytecode, 5);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 1);
 
-    llic_bytecode_append(bytecode, COMMAND_JUMP_FORWARD);
-    llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, COMMAND_PUSH_STACK);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 5);
 
-    llic_bytecode_append(bytecode, COMMAND_NOP);
-    llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-    llic_bytecode_append(bytecode, 0);
-    llic_bytecode_append(bytecode, 0);
-    llic_bytecode_append(bytecode, 6);
-    llic_bytecode_append(bytecode, COMMAND_JUMP_BACK);
-    llic_bytecode_append(bytecode, 0);*/
+  llic_bytecode_append(bytecode, COMMAND_PUSH_STACK);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 6);
+
+  llic_bytecode_append(bytecode, COMMAND_JUMP_FORWARD);
+
+  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+  llic_bytecode_append(bytecode, 0);
+  llic_bytecode_append(bytecode, 255);
+  llic_bytecode_append(bytecode, 255);
+
+  llic_bytecode_append(bytecode, COMMAND_HALT);
+
+  llic_bytecode_append(bytecode, COMMAND_JUMP_BACK);
+
   /*
     llic_bytecode_append(bytecode, COMMAND_PUSH);
     llic_bytecode_append(bytecode, 0);
@@ -41,85 +49,85 @@ int main(void) {
     llic_bytecode_append(bytecode, 0);
     llic_bytecode_append(bytecode, 1);*/
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 1);
-  llic_bytecode_append(bytecode, 255);
+  /* llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, 255);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 1);
-  llic_bytecode_append(bytecode, 1);
-  llic_bytecode_append(bytecode, 255);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, 255);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_MOUSE_POSITION);
+   llic_bytecode_append(bytecode, COMMAND_SET_MOUSE_POSITION);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
 
-  llic_bytecode_append(bytecode, COMMAND_EXECUTE_MOUSE);
+   llic_bytecode_append(bytecode, COMMAND_EXECUTE_MOUSE);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 1);
 
-  llic_bytecode_append(bytecode, COMMAND_EXECUTE_MOUSE);
+   llic_bytecode_append(bytecode, COMMAND_EXECUTE_MOUSE);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 4);
-  llic_bytecode_append(bytecode, 255);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 4);
+   llic_bytecode_append(bytecode, 255);
 
-  llic_bytecode_append(bytecode, COMMAND_SLEEP);
+   llic_bytecode_append(bytecode, COMMAND_SLEEP);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 1);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0x38);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0x38);
 
-  llic_bytecode_append(bytecode, COMMAND_EXECUTE_KEYBOARD);
+   llic_bytecode_append(bytecode, COMMAND_EXECUTE_KEYBOARD);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 2);
-  llic_bytecode_append(bytecode, 255);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 2);
+   llic_bytecode_append(bytecode, 255);
 
-  llic_bytecode_append(bytecode, COMMAND_SLEEP);
+   llic_bytecode_append(bytecode, COMMAND_SLEEP);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 2);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 2);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 1);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
 
-  llic_bytecode_append(bytecode, COMMAND_EXECUTE_KEYBOARD);
+   llic_bytecode_append(bytecode, COMMAND_EXECUTE_KEYBOARD);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 1);
 
-  llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
-  llic_bytecode_append(bytecode, 1);
-  llic_bytecode_append(bytecode, 0);
-  llic_bytecode_append(bytecode, 0x38);
+   llic_bytecode_append(bytecode, COMMAND_SET_REGISTER);
+   llic_bytecode_append(bytecode, 1);
+   llic_bytecode_append(bytecode, 0);
+   llic_bytecode_append(bytecode, 0x38);
 
-  llic_bytecode_append(bytecode, COMMAND_EXECUTE_KEYBOARD);
+   llic_bytecode_append(bytecode, COMMAND_EXECUTE_KEYBOARD);
 
-  /*
-    llic_bytecode_append(bytecode, COMMAND_SCROLL_MOUSE);
-    llic_bytecode_append(bytecode, COMMAND_HALT);*/
+   /*
+     llic_bytecode_append(bytecode, COMMAND_SCROLL_MOUSE);
+     llic_bytecode_append(bytecode, COMMAND_HALT);*/
 
   llic_config_t config = llic_config_default();
   config.permission = PERM_ALL;
