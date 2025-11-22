@@ -97,3 +97,36 @@ uint8_t llic_input_scroll_mouse(const uint16_t power,
 
   return 1;
 }
+
+uint8_t llic_input_keyboard_execute(const uint16_t keycode,
+                                    const llic_input_keyboard_event_t type) {
+  const CGEventRef key_up = CGEventCreateKeyboardEvent(NULL, keycode, 1);
+  const CGEventRef key_down = CGEventCreateKeyboardEvent(NULL, keycode, 0);
+
+  if (key_up == NULL || key_down == NULL)
+    return 0;
+
+  switch (type) {
+  case KEYBOARD_DOWN:
+    CGEventPost(kCGHIDEventTap, key_up);
+
+    break;
+  case KEYBOARD_UP:
+    CGEventPost(kCGHIDEventTap, key_down);
+
+    break;
+  case KEYBOARD_PRESS:
+    CGEventPost(kCGHIDEventTap, key_up);
+    usleep(1000);
+    CGEventPost(kCGHIDEventTap, key_down);
+
+    break;
+  default:
+    return 0;
+  }
+
+  CFRelease(key_up);
+  CFRelease(key_down);
+
+  return 1;
+}

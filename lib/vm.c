@@ -362,6 +362,18 @@ void llic_vm_execute(llic_vm_t *vm) {
 
     break;
   }
+  case COMMAND_EXECUTE_KEYBOARD: {
+    uint16_t type, keycode;
+    rid = REG_A, rid2 = REG_B;
+
+    if (!vm_get_two_register(vm, rid, rid2, &type, &keycode))
+      return;
+
+    if (!llic_input_keyboard_execute(keycode, type))
+      vm->error = llic_error_new(ERROR_MACOS_API);
+
+    break;
+  }
   case COMMAND_SLEEP: {
     uint16_t ms;
     rid = REG_A;

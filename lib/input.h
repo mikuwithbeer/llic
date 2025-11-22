@@ -20,6 +20,12 @@ typedef enum {
   MOUSE_SCROLL_RIGHT
 } llic_input_scroll_event_t;
 
+typedef enum {
+  KEYBOARD_DOWN,
+  KEYBOARD_UP,
+  KEYBOARD_PRESS
+} llic_input_keyboard_event_t;
+
 /**
  * @brief Gets the current global mouse cursor position.
  *
@@ -58,5 +64,16 @@ uint8_t llic_input_apply_mouse_event(llic_input_mouse_event_t type);
  * @return Returns 1 on success, or 0 if the event simulation fails.
  */
 uint8_t llic_input_scroll_mouse(uint16_t power, llic_input_scroll_event_t type);
+
+/**
+ * @brief Simulates a keyboard event.
+ *
+ * @param keycode The virtual keycode for the character.
+ * @param type The type of keyboard event.
+ *
+ * @return Returns 1 on success, or 0 if the event simulation fails.
+ */
+uint8_t llic_input_keyboard_execute(uint16_t keycode,
+                                    llic_input_keyboard_event_t type);
 
 #endif // LLIC_INPUT_H
